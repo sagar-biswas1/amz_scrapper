@@ -51,6 +51,8 @@ import fs from "fs";
 //   }
 // }
 
+
+
 class BrowserFactory {
   private static instance: Browser | null = null;
   private static readonly dataDir = path.resolve("dataDir");
@@ -73,7 +75,7 @@ class BrowserFactory {
     if (!BrowserFactory.instance) {
       BrowserFactory.instance = await puppeteer.launch({
         userDataDir: BrowserFactory.dataDir,
-        headless: process.env.HEADLESS === "true", // Toggle headless mode
+        headless: true, // process.env.HEADLESS === "true", // Toggle headless mode
         args: [
           "--no-sandbox",
           "--disable-setuid-sandbox",
@@ -102,6 +104,8 @@ class BrowserFactory {
 }
 
 export default BrowserFactory;
+
+
 
 export async function scrapeReviewData(page) {
   try {
