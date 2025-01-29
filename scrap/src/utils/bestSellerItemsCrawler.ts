@@ -2,7 +2,7 @@ import BrowserFactory from "./page";
 import * as path from "node:path";
 import fs from "fs";
 
-export async function scrapePage(url: string): Promise<void> {
+export async function scrapePage(url: string): Promise<{ title: string; link: string; }[]>  {
   const page = await BrowserFactory.getNewPage(); // Get a new page
   try {
     console.log(`Navigating to ${url}`);
@@ -21,7 +21,7 @@ export async function scrapePage(url: string): Promise<void> {
     await page.waitForSelector('.enter-done[aria-label="Navigation List"]');
 
     const pageLinks = await page.evaluate(async () => {
-      const links = [];
+      const links:string[] = [];
       const allLinksNode = document
         .querySelector('.enter-done[aria-label="Navigation List"]')
         ?.querySelectorAll("a");
@@ -37,7 +37,9 @@ export async function scrapePage(url: string): Promise<void> {
     });
 
     const productPageDetailsLinks: { title: string; link: string }[] = [];
-    for (let i = 0; i < pageLinks.length; i++) {
+
+    const slicedPageLinks= pageLinks.slice(0,3)
+    for (let i = 0; i < slicedPageLinks.length; i++) {
       console.log(`Navigating to: ${pageLinks[i]}`);
 
       // Navigate to the link
@@ -45,7 +47,7 @@ export async function scrapePage(url: string): Promise<void> {
 
       // Perform scrolling
       await page.evaluate(() => {
-        return new Promise((resolve) => {
+        return new Promise<void>((resolve) => {
           let totalHeight = 0;
           const distance = 100;
           const timer = setInterval(() => {
@@ -65,9 +67,10 @@ export async function scrapePage(url: string): Promise<void> {
         document
           .querySelectorAll('[data-testid="product-showcase-title"]')
           .forEach((item) => {
+            const anchor = item as HTMLAnchorElement
             productLinks.push({
-              title: item.title,
-              link: item.href,
+              title: anchor?.title,
+              link: anchor?.href,
             });
           });
 
@@ -76,15 +79,17 @@ export async function scrapePage(url: string): Promise<void> {
       productPageDetailsLinks.push(...productsLinks);
     }
 
-    console.log(productPageDetailsLinks)
+   
+
+    return productPageDetailsLinks
   } catch (error) {
     console.error("Error while scraping the page:", error);
+    return []
   } finally {
     await page.close(); // Close the page when done
+    BrowserFactory.closeBrowser()
     console.log("Page closed");
+
   }
 }
 
-scrapePage(
-  "https://www.amazon.com/stores/page/9E1432F5-45BE-4E2A-A652-F02E7B55204D?ingress=2&visitId=ca18b7ca-9aa6-42cd-8f09-e39422c064c9&store_ref=bl_ast_dp_brandLogo_sto&ref_=ast_bln"
-);

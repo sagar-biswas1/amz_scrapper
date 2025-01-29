@@ -2,23 +2,25 @@ import { Page } from "puppeteer";
 import BrowserFactory, { scrapeReviewData } from "./src/utils/crawler.ts";
 import { saveData } from "./src/utils/saveData.js";
 import * as path from "node:path";
-
+import { scrapePage } from "./src/utils/bestSellerItemsCrawler.ts";
+import { pageInfoCrawler } from "./src/utils/pageInfoCrawler.ts";
 
 // // Returns: 'myfile.html')
-const browser = await BrowserFactory.getBrowser();
 
-
-export const page: Page = await browser.newPage();
 (async () => {
+  const browser = await BrowserFactory.getBrowser();
+
+  const page: Page = await browser.newPage();
   // Navigate to the URL with error handling
   const url =
-    "https://www.amazon.com/Futricy-Beginner-Traveler-Emergency-Accessories/dp/B0BXKB7QF6/ref=zg_bs_c_arts-crafts_d_sccl_5/134-8915425-9255066?pd_rd_w=bj2iY&content-id=amzn1.sym.7379aab7-0dd8-4729-b0b5-2074f1cb413d&pf_rd_p=7379aab7-0dd8-4729-b0b5-2074f1cb413d&pf_rd_r=R93HJYDRQJCFH1SM4JKV&pd_rd_wg=Hg0ao&pd_rd_r=9b45083c-4743-4eab-9265-32b4e24dec9c&pd_rd_i=B0BXKB7QF6&th=1";
+    "https://www.amazon.com/SEVEGO-Joggers-Lightweight-Sweatpants-Athletic/dp/B0CRHJ9DQZ?ref_=ast_sto_dp&th=1&psc=1";
 
   await page.setViewport({ width: 1280, height: 800 });
 
   await page.goto(url, { waitUntil: "networkidle2", timeout: 60000 });
 
   try {
+   await pageInfoCrawler(page);
     const reviews = await scrapeReviewData(page);
 
     console.log(reviews);
@@ -30,9 +32,15 @@ export const page: Page = await browser.newPage();
   }
 })();
 
+// (async()=>{
+//   const storeURL='https://www.amazon.com/stores/SEVEGO/page/F39FD0D5-16B2-4D94-8BF6-8202708FA4AA?ref_=ast_bln&store_ref=bl_ast_dp_brandLogo_sto'
+//   const products= await  scrapePage(
+//    storeURL
+//   );
+//   console.log(products)
+//   await BrowserFactory.closeBrowser()
+// })()
+
 // process.on("exit", async () => {
 //   await closeBrowserInstance();
 // });
-
-
-

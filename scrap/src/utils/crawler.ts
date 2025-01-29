@@ -51,8 +51,6 @@ import fs from "fs";
 //   }
 // }
 
-
-
 class BrowserFactory {
   private static instance: Browser | null = null;
   private static readonly dataDir = path.resolve("dataDir");
@@ -75,15 +73,17 @@ class BrowserFactory {
     if (!BrowserFactory.instance) {
       BrowserFactory.instance = await puppeteer.launch({
         userDataDir: BrowserFactory.dataDir,
-        headless: true, // process.env.HEADLESS === "true", // Toggle headless mode
+        headless: true,
         args: [
-          "--no-sandbox",
-          "--disable-setuid-sandbox",
-          "--disable-dev-shm-usage",
-          "--disable-gpu",
-          "--disable-extensions",
-          "--disable-features=InfiniteSessionRestore",
-          "--no-default-browser-check",
+          // "--no-sandbox",
+          // "--disable-setuid-sandbox",
+          // "--disable-dev-shm-usage",
+          // "--disable-gpu",
+
+          // "--disable-extensions",
+          // "--disable-features=InfiniteSessionRestore",
+          // "--no-default-browser-check",
+          // "--headless",
         ],
       });
 
@@ -105,19 +105,17 @@ class BrowserFactory {
 
 export default BrowserFactory;
 
-
-
 export async function scrapeReviewData(page) {
-  try {
-    const dialog = await page.waitForSelector('[role="alertdialog"]', {
-      timeout: 5000, // Timeout for waiting
-    });
-    if (dialog) {
-      await page.click('[data-action-type="DISMISS"]');
-    }
-  } catch (e) {
-    console.log("No dialog detected or error handling dialog:", e.message);
-  }
+  // try {
+  //   const dialog = await page.waitForSelector('[role="alertdialog"]', {
+  //     timeout: 5000, // Timeout for waiting
+  //   });
+  //   if (dialog) {
+  //     await page.click('[data-action-type="DISMISS"]');
+  //   }
+  // } catch (e) {
+  //   console.log("No dialog detected or error handling dialog:", e.message);
+  // }
 
   try {
     // Wait for the dropdown label and click it
