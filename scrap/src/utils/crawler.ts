@@ -72,8 +72,8 @@ class BrowserFactory {
     // Create a new browser instance if it doesn't exist
     if (!BrowserFactory.instance) {
       BrowserFactory.instance = await puppeteer.launch({
-        userDataDir: BrowserFactory.dataDir,
-        headless: true,
+        // userDataDir: BrowserFactory.dataDir,
+        headless: false,
         args: [
           // "--no-sandbox",
           // "--disable-setuid-sandbox",
@@ -105,7 +105,7 @@ class BrowserFactory {
 
 export default BrowserFactory;
 
-export async function scrapeReviewData(page) {
+export async function scrapeReviewData(page,url) {
   // try {
   //   const dialog = await page.waitForSelector('[role="alertdialog"]', {
   //     timeout: 5000, // Timeout for waiting
@@ -121,7 +121,7 @@ export async function scrapeReviewData(page) {
     // Wait for the dropdown label and click it
     await page.waitForSelector('[data-a-class="cm-cr-dp-filter-dropdown"]', {
       visible: true,
-      timeout: 5000,
+      timeout: 20000,
     });
     await page.click('[data-a-class="cm-cr-dp-filter-dropdown"]');
 
@@ -138,13 +138,8 @@ export async function scrapeReviewData(page) {
       '[data-hook="cr-widget-FocalReviews"] .a-row .a-spacing-medium .aok-hidden'
     );
     console.log("Content loaded successfully after sorting.");
-  } catch (e) {
-    console.log(e);
-    console.error(
-      "Error interacting with the sort dropdown or waiting for content:",
-      e.message
-    );
-  }
+
+
 
   const reviews = await page.evaluate(() => {
     const reviewElements = document.querySelectorAll(
@@ -172,4 +167,13 @@ export async function scrapeReviewData(page) {
     path: path.join(__dirname, "..", "..", "screenshots", "screenshot.png"),
   });
   return reviews;
+  } catch (e) {
+    console.log(e);
+    console.log(url)
+    console.error(
+      "Error interacting with the sort dropdown or waiting for content:",
+      e.message
+    );
+  }
+
 }

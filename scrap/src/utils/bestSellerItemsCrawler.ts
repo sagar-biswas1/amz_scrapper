@@ -62,6 +62,8 @@ export async function scrapePage(url: string): Promise<{ title: string; link: st
           }, 100);
         });
       });
+
+      
       const productsLinks = await page.evaluate(async () => {
         const productLinks: { title: string; link: string }[] = [];
         document

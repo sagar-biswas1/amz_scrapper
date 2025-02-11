@@ -21,9 +21,9 @@ export const pageInfoCrawler = async (page) => {
     const reviewCountElement = d?.querySelector("#acrCustomerReviewText");
 
     if (ratingElement)
-      data["Customer Rating"] = ratingElement.textContent?.trim();
+      data["Customer Rating"] = ratingElement?.textContent?.trim()||"";
     if (reviewCountElement)
-      data["Customer Reviews"] = reviewCountElement.textContent?.trim();
+      data["Customer Reviews"] = reviewCountElement?.textContent?.trim()||"";
 
     return data;
   });
